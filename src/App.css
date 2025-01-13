@@ -1,0 +1,368 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Orbitron", sans-serif;
+}
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Ensure the root container fills the viewport */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: linear-gradient(135deg, #000000, #101010);
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #000000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #00a3ff;
+  text-shadow: 0 0 10px #00a3ff;
+}
+
+.navbar .logo img {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+.nav-links a {
+  color: #00a3ff;
+  font-weight: bold;
+  padding: 8px 12px;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #00ffff;
+  text-shadow: 0 0 10px #00ffff;
+}
+
+.wallet-button {
+  background-color: #00a3ff;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wallet-button:hover {
+  background-color: #00ffff;
+  box-shadow: 0 4px 10px rgba(0, 255, 255, 0.8);
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #00a3ff;
+  background: url("/Design_2.png") center/cover no-repeat;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 20px #00a3ff;
+}
+
+.hero p {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 10px #87cefa;
+}
+
+.cta-button {
+  background-color: transparent;
+  border: 2px solid #00a3ff;
+  color: #00a3ff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px #00a3ff;
+}
+
+.cta-button:hover {
+  background-color: #00ffff;
+  color: #1a1a1a;
+  box-shadow: 0 0 15px #00ffff;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  background-color: #000000;
+  padding: 20px;
+  color: #00e6ff;
+  text-shadow: 0 0 10px #00e6ff;
+}
+
+/* Combined Section */
+.combined-section {
+  padding: 60px 20px;
+  background: linear-gradient(-45deg, #1e1e1e, #00a3ff, #252525, #87cefa);
+  background-size: 400% 400%;
+  animation: gradientShift 10s ease infinite;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Features Section */
+.features {
+  text-align: center;
+}
+
+.features h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #87cefa;
+  text-shadow: 0 0 5px #87cefa;
+}
+
+.grid-container {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature {
+  background-color: rgba(30, 30, 30, 0.8);
+  border: 1px solid #333;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 163, 255, 0.5);
+}
+
+.feature h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #00a3ff;
+  text-shadow: 0 0 5px #00a3ff;
+}
+
+.feature p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #e0e0e0;
+}
+
+/* Community Section */
+.community {
+  text-align: center;
+}
+
+.community h2 {
+  font-size: 2rem;
+  color: #87cefa;
+  text-shadow: 0 0 5px #87cefa;
+}
+
+.community p {
+  color: #e0e0e0;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.social-icon {
+  color: #00a3ff;
+  font-size: 1.2rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.social-icon img.x-logo {
+  width: 20px;
+  height: 20px;
+}
+
+.social-icon:hover {
+  color: #00ffff;
+  text-shadow: 0 0 5px #87cefa;
+}
+/* Contact Section */
+.contact {
+  text-align: center;
+}
+
+.contact h2 {
+  font-size: 2rem;
+  color: #87cefa;
+  text-shadow: 0 0 5px #87cefa;
+}
+
+.contact form {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.contact input,
+.contact textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  background: rgba(30, 30, 30, 0.8);
+  color: #e0e0e0;
+  border: 1px solid #00a3ff;
+  border-radius: 5px;
+  box-shadow: 0 0 5px #00a3ff;
+  font-size: 1rem;
+}
+
+.contact textarea {
+  height: 120px;
+  resize: none;
+}
+
+.contact button {
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  color: #87cefa;
+  border: 2px solid #87cefa;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 5px #87cefa;
+  font-size: 1.1rem;
+}
+
+.contact button:hover {
+  background-color: #00ffff;
+  color: #1a1a1a;
+  box-shadow: 0 0 15px #87cefa;
+}
+
+.contact p {
+  color: #e0e0e0;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+/* Gradient Animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Footer */
+footer {
+  background-color: #141414;
+  color: #e0e0e0;
+  text-align: center;
+  padding: 20px 0;
+  box-shadow: 0 0 10px rgba(0, 163, 255, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  body {
+    padding: 0 10px;
+  }
+
+  .navbar,
+  .header,
+  .footer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .grid-container,
+  .agent-grid,
+  .swap-container,
+  .staking-form {
+    width: 100%;
+  }
+
+  .navbar .nav-links,
+  .footer p {
+    text-align: center;
+    margin: 10px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero h1,
+  .hero h2,
+  .hero p {
+    font-size: 1.5rem;
+  }
+
+  .wallet-button,
+  .cta-button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .grid-container .feature,
+  .agent-card,
+  .swap-card,
+  .staking-form {
+    margin: 10px 0;
+  }
+}

@@ -1,0 +1,82 @@
+/* General styling for the yield page */
+.mind-yield {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #001f3f, #000000);
+  color: #e0e0e0;
+}
+
+.yield-container {
+  text-align: center;
+  background-color: rgba(30, 30, 30, 0.9);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 163, 255, 0.5);
+  width: 80%;
+  max-width: 600px;
+}
+
+/* Page title */
+.title {
+  font-size: 2.5rem;
+  color: #00a3ff;
+  margin-bottom: 20px;
+}
+
+/* Page description */
+.description {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+/* Staking form */
+.staking-form {
+  margin-top: 20px;
+}
+
+.staking-form h2 {
+  font-size: 1.8rem;
+  color: #87cefa;
+  text-shadow: 0 0 5px #87cefa;
+  margin-bottom: 15px;
+}
+
+.staking-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #00a3ff;
+  border-radius: 5px;
+  background-color: rgba(30, 30, 30, 0.9);
+  color: #e0e0e0;
+  font-size: 1rem;
+  box-shadow: 0 0 10px rgba(0, 163, 255, 0.5);
+}
+
+/* Stake button */
+.stake-button {
+  background-color: #00a3ff;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 10px #00a3ff;
+}
+
+.stake-button:hover {
+  background-color: #00ffff;
+  box-shadow: 0 0 15px #00ffff;
+}
+
+/* Success message */
+.success-message {
+  margin-top: 20px;
+  color: #00ff99;
+  font-size: 1.1rem;
+  text-shadow: 0 0 10px #00ff99;
+}
