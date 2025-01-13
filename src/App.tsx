@@ -69,10 +69,40 @@ function Navbar() {
           <Link to="/mind-exchange">Mind Exchange</Link>
         </li>
       </ul>
-      <button className="wallet-button" onClick={connectWallet}>
-        Connect Wallet
-      </button>
+      <CustomWalletButton />
     </nav>
+  );
+}
+
+// Custom Wallet Button Component
+function CustomWalletButton() {
+  const wallets = useWallets();
+
+  const handleWalletConnect = async () => {
+    if (!wallets || wallets.length === 0) {
+      alert("No wallets found. Please install a Sui wallet extension.");
+      return;
+    }
+
+    const selectedWallet = wallets[0]; // Select the first wallet
+    try {
+      if (selectedWallet.features["standard:connect"]) {
+        const connectFeature = selectedWallet.features["standard:connect"];
+        await connectFeature.connect();
+        alert(`Connected to wallet: ${selectedWallet.name}`);
+      } else {
+        alert("The selected wallet does not support connection functionality.");
+      }
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+      alert("Failed to connect to the wallet.");
+    }
+  };
+
+  return (
+    <button className="wallet-button" onClick={handleWalletConnect}>
+      Connect Wallet
+    </button>
   );
 }
 
@@ -204,29 +234,6 @@ function Footer() {
       <p>© 2025 Sui Mind. All rights reserved.</p>
     </footer>
   );
-}
-
-// Updated connectWallet function
-async function connectWallet() {
-  const wallets = useWallets();
-  if (!wallets || wallets.length === 0) {
-    alert("No wallets found. Please install a wallet extension.");
-    return;
-  }
-
-  const selectedWallet = wallets[0]; // Automatically selects the first wallet
-  try {
-    if (selectedWallet.features["standard:connect"]) {
-      const connectFeature = selectedWallet.features["standard:connect"];
-      await connectFeature.connect();
-      alert(`Connected to wallet: ${selectedWallet.name}`);
-    } else {
-      alert("The selected wallet does not support connection functionality.");
-    }
-  } catch (error) {
-    console.error("Error connecting to the wallet:", error);
-    alert("Failed to connect to the wallet.");
-  }
 }
 
 export default App;
