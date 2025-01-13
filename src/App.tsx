@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom"; // Consolidated imports
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./App.css";
 import "./index.css";
 import "@mysten/dapp-kit/dist/index.css";
@@ -6,6 +6,7 @@ import {
   createNetworkConfig,
   SuiClientProvider,
   WalletProvider,
+  useWallets,
 } from "@mysten/dapp-kit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { getFullnodeUrl } from "@mysten/sui/client";
@@ -205,8 +206,27 @@ function Footer() {
   );
 }
 
-function connectWallet() {
-  alert("Wallet connection functionality coming soon!");
+// Updated connectWallet function
+async function connectWallet() {
+  const wallets = useWallets();
+  if (!wallets || wallets.length === 0) {
+    alert("No wallets found. Please install a wallet extension.");
+    return;
+  }
+
+  const selectedWallet = wallets[0]; // Automatically selects the first wallet
+  try {
+    if (selectedWallet.features["standard:connect"]) {
+      const connectFeature = selectedWallet.features["standard:connect"];
+      await connectFeature.connect();
+      alert(`Connected to wallet: ${selectedWallet.name}`);
+    } else {
+      alert("The selected wallet does not support connection functionality.");
+    }
+  } catch (error) {
+    console.error("Error connecting to the wallet:", error);
+    alert("Failed to connect to the wallet.");
+  }
 }
 
 export default App;
