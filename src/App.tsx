@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import React, { useState } from "react";
 import "./App.css";
 import "./index.css";
 import "@mysten/dapp-kit/dist/index.css";
@@ -77,6 +78,9 @@ function Navbar() {
 // Custom Wallet Button Component
 function CustomWalletButton() {
   const wallets = useWallets();
+  const [connectedWalletAddress, setConnectedWalletAddress] = useState<
+    string | null
+  >(null);
 
   const handleWalletConnect = async () => {
     if (!wallets || wallets.length === 0) {
@@ -89,7 +93,10 @@ function CustomWalletButton() {
       if (selectedWallet.features["standard:connect"]) {
         const connectFeature = selectedWallet.features["standard:connect"];
         await connectFeature.connect();
-        alert(`Connected to wallet: ${selectedWallet.name}`);
+        const address = selectedWallet.accounts[0]?.address; // Retrieve wallet address
+        if (address) {
+          setConnectedWalletAddress(address);
+        }
       } else {
         alert("The selected wallet does not support connection functionality.");
       }
@@ -99,9 +106,17 @@ function CustomWalletButton() {
     }
   };
 
+  const formatAddress = (address: string) => {
+    return `${address.substring(0, 6)}...${address.substring(
+      address.length - 4
+    )}`;
+  };
+
   return (
     <button className="wallet-button" onClick={handleWalletConnect}>
-      Connect Wallet
+      {connectedWalletAddress
+        ? formatAddress(connectedWalletAddress)
+        : "Connect Wallet"}
     </button>
   );
 }
