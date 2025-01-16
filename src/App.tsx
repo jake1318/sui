@@ -106,6 +106,11 @@ function CustomWalletButton() {
     }
   };
 
+  const handleWalletDisconnect = () => {
+    setConnectedWalletAddress(null);
+    alert("Wallet disconnected successfully.");
+  };
+
   const formatAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(
       address.length - 4
@@ -113,11 +118,25 @@ function CustomWalletButton() {
   };
 
   return (
-    <button className="wallet-button" onClick={handleWalletConnect}>
-      {connectedWalletAddress
-        ? formatAddress(connectedWalletAddress)
-        : "Connect Wallet"}
-    </button>
+    <div className="wallet-container">
+      {connectedWalletAddress ? (
+        <>
+          <button className="wallet-button">
+            {formatAddress(connectedWalletAddress)}
+          </button>
+          <button
+            className="wallet-disconnect"
+            onClick={handleWalletDisconnect}
+          >
+            Disconnect
+          </button>
+        </>
+      ) : (
+        <button className="wallet-button" onClick={handleWalletConnect}>
+          Connect Wallet
+        </button>
+      )}
+    </div>
   );
 }
 
