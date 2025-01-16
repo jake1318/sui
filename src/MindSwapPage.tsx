@@ -17,7 +17,7 @@ function MindSwapPage() {
   const [slippage, setSlippage] = useState(5); // Default slippage tolerance
   const [isLoading, setIsLoading] = useState(false);
   const [statusMessage, setStatusMessage] = useState("");
-  const [poolId, setPoolId] = useState("");
+  const [pool, setPool] = useState<null | any>(null); // Updated to accept pool or null
   const wallets = useWallets();
 
   // Fetch coin list from API
@@ -50,22 +50,22 @@ function MindSwapPage() {
     fetchCoins();
   }, []);
 
-  // Fetch pool ID dynamically
+  // Fetch pool dynamically
   useEffect(() => {
     if (fromToken && toToken) {
-      const fetchPoolId = async () => {
+      const fetchPool = async () => {
         try {
           const pools = await cetusClmmSDK.Pool.getPools([], 0, 200);
           const matchingPool = pools.find(
-            (pool) => pool.coinTypeA === fromToken && pool.coinTypeB === toToken
+            (p) => p.coinTypeA === fromToken && p.coinTypeB === toToken
           );
-          setPoolId(matchingPool?.poolAddress || "");
+          setPool(matchingPool || null);
         } catch (error) {
-          console.error("Error fetching pool ID:", error);
+          console.error("Error fetching pool:", error);
         }
       };
 
-      fetchPoolId();
+      fetchPool();
     }
   }, [fromToken, toToken]);
 
@@ -76,7 +76,7 @@ function MindSwapPage() {
       return;
     }
 
-    if (!poolId) {
+    if (!pool) {
       setStatusMessage("Pool not found for the selected token pair.");
       return;
     }
@@ -108,11 +108,15 @@ function MindSwapPage() {
         "0x4915973e28558c11904f9eae396df36cca9e25e914d701109ee8c8ada6e571d9"; // Replace with your wallet address
 
       // Add transfer for the fee
-      tx.addTransfer(feeRecipient, fee.toString(), fromToken);
+      tx.add({
+        kind: "transferObjects",
+        arguments: [feeRecipient, fee.toString()],
+      });
 
       // Pre-swap to calculate parameters
       const res = await cetusClmmSDK.Swap.preswap({
-        poolId,
+        pool: pool,
+        currentSqrtPrice: pool.currentSqrtPrice,
         coinTypeA: fromToken,
         coinTypeB: toToken,
         decimalsA: 6, // Replace with actual decimals
@@ -126,7 +130,7 @@ function MindSwapPage() {
 
       // Execute the swap
       await cetusClmmSDK.Swap.createSwapTransactionPayload({
-        pool_id: poolId,
+        pool_id: pool.poolAddress,
         coinTypeA: fromToken,
         coinTypeB: toToken,
         a2b: fromToken < toToken,

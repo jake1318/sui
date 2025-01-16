@@ -6,14 +6,11 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        entryFileNames: "[name].js", // Ensure all entry files have the .js extension
-        chunkFileNames: "[name].js", // Ensure all chunks have the .js extension
+        entryFileNames: "[name].js",
+        chunkFileNames: "[name].js",
         assetFileNames: "[name].[ext]",
       },
     },
   },
-  server: {
-    // Removed invalid `mimeTypes` property
-    port: 3000, // Optionally specify a port if needed
-  },
+  base: "./", // Ensures correct relative paths for production builds
 });
