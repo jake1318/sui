@@ -105,13 +105,10 @@ function MindSwapPage() {
       }
 
       const feeRecipient =
-        "0xY0x4915973e28558c11904f9eae396df36cca9e25e914d701109ee8c8ada6e571d9"; // Replace with your wallet address
+        "0x4915973e28558c11904f9eae396df36cca9e25e914d701109ee8c8ada6e571d9"; // Replace with your wallet address
 
       // Add transfer for the fee
-      tx.add({
-        kind: "Transfer",
-        arguments: [feeRecipient, fee, fromToken],
-      });
+      tx.addTransfer(feeRecipient, fee.toString(), fromToken);
 
       // Pre-swap to calculate parameters
       const res = await cetusClmmSDK.Swap.preswap({
@@ -122,10 +119,10 @@ function MindSwapPage() {
         decimalsB: 6, // Replace with actual decimals
         a2b: fromToken < toToken,
         byAmountIn: true,
-        amount: amountAfterFee,
+        amount: amountAfterFee.toString(),
       });
 
-      const amountLimit = res.estimatedAmountOut * (1 - slippage / 100);
+      const amountLimit = (res?.estimatedAmountOut || 0) * (1 - slippage / 100);
 
       // Execute the swap
       await cetusClmmSDK.Swap.createSwapTransactionPayload({

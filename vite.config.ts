@@ -13,8 +13,7 @@ export default defineConfig({
     },
   },
   server: {
-    mimeTypes: {
-      "application/javascript": ["js"], // Explicitly define MIME type for JS
-    },
+    // Removed invalid `mimeTypes` property
+    port: 3000, // Optionally specify a port if needed
   },
 });
