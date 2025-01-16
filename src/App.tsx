@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import "./index.css";
 import "@mysten/dapp-kit/dist/index.css";
