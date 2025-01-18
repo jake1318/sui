@@ -2,37 +2,37 @@ import { useState } from "react";
 import "./MindSearchPage.css";
 
 function MindSearchPage() {
-  const [query, setQuery] = useState<string>(""); // Query input state
-  const [result, setResult] = useState<string>(""); // API result state
-  const [error, setError] = useState<string | null>(null); // Error state
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading indicator
+  const [query, setQuery] = useState<string>("");
+  const [result, setResult] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSearch = async () => {
-    setError(null); // Reset error state
-    setIsLoading(true); // Set loading to true
+    setError(null);
+    setIsLoading(true);
 
     try {
-      // Make POST request to the backend
-      const response = await fetch("http://localhost:5000/api/search", {
+      const response = await fetch("/api/generate", {
+        // Use relative path
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ prompt: query }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setResult(data.result); // Set the result from the response
+        setResult(data.result);
       } else {
-        setError(data.error || "An error occurred while fetching the results.");
+        setError(data.error || "An error occurred while fetching results.");
       }
     } catch (err) {
       console.error("Error:", err);
       setError("Unable to fetch results. Please try again.");
     } finally {
-      setIsLoading(false); // Reset loading state
+      setIsLoading(false);
     }
   };
 
@@ -50,7 +50,7 @@ function MindSearchPage() {
             placeholder="Ask anything..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            disabled={isLoading} // Disable input while loading
+            disabled={isLoading}
           />
           <button
             className="search-button"
