@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node backend/server.js"
   },
   "dependencies": {
     "@cetusprotocol/cetus-sui-clmm-sdk": "^5.2.0",
@@ -15,7 +16,7 @@
     "@eslint/object-schema": "^2.1.5",
     "@mysten/dapp-kit": "^0.14.46",
     "@mysten/deepbook-v3": "^0.12.24",
-    "@mysten/sui": "^1.19.0",
+    "@mysten/sui": "^1.20.0",
     "@tanstack/react-query": "^5.64.0",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",

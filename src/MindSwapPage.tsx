@@ -108,10 +108,7 @@ function MindSwapPage() {
         "0x4915973e28558c11904f9eae396df36cca9e25e914d701109ee8c8ada6e571d9"; // Replace with your wallet address
 
       // Add transfer for the fee
-      tx.add({
-        kind: "transferObjects",
-        arguments: [feeRecipient, fee.toString()],
-      });
+      tx.transferObjects([feeRecipient], fee.toString());
 
       // Pre-swap to calculate parameters
       const res = await cetusClmmSDK.Swap.preswap({
