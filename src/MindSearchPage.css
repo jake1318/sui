@@ -2,8 +2,9 @@
 .mind-search {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
+  align-items: center; /* Centers content horizontally */
   background: linear-gradient(135deg, #1e1e1e, #000000);
   color: #00a3ff;
   font-family: "Orbitron", sans-serif;
@@ -11,6 +12,7 @@
 }
 
 .container {
+  flex-grow: 0; /* Ensures the container does not expand unnecessarily */
   text-align: center;
   max-width: 600px;
   width: 100%;
@@ -108,6 +110,18 @@
   font-size: 1rem;
   color: #d4d4d4;
   line-height: 1.6;
+}
+
+/* Footer Styling */
+footer {
+  text-align: center;
+  padding: 10px 0;
+  background-color: #141414;
+  color: #e0e0e0;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
 }
 
 /* Responsiveness for smaller devices */
