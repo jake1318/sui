@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import { HopApi, HopApiOptions } from "@hop.ag/sdk";
 import { getFullnodeUrl } from "@mysten/sui/client";
-import { useWallets } from "@mysten/dapp-kit";
+import {
+  useSignAndExecuteTransaction,
+  useCurrentAccount,
+  ConnectButton,
+} from "@mysten/dapp-kit";
+import { Transaction } from "@mysten/sui/transactions";
 import "./MindSwapPage.css";
 
 // Initialize Hop SDK
 const rpc_url = getFullnodeUrl("mainnet");
 const hop_api_options: HopApiOptions = {
-  api_key: "YOUR_API_KEY", // Replace with the actual API key
+  api_key: "YOUR_API_KEY", // Replace with your Hop API key
   fee_bps: 0, // No additional fees
   fee_wallet: "YOUR_SUI_ADDRESS", // Replace with your SUI wallet address
   charge_fees_in_sui: true, // Charge fees in SUI if possible
@@ -15,29 +20,30 @@ const hop_api_options: HopApiOptions = {
 const hopSdk = new HopApi(rpc_url, hop_api_options);
 
 function MindSwapPage() {
-  const [coinList, setCoinList] = useState<string[]>([]);
+  const [coinList, setCoinList] = useState<any[]>([]);
   const [fromToken, setFromToken] = useState<string>("");
   const [toToken, setToToken] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
-  const [slippage, setSlippage] = useState<number>(1); // Default slippage tolerance (1%)
-  const [isLoading, setIsLoading] = useState(false);
+  const [slippage, setSlippage] = useState<number>(1);
   const [statusMessage, setStatusMessage] = useState<string>("");
-  const wallets = useWallets();
+  const [isLoading, setIsLoading] = useState(false);
+  const [digest, setDigest] = useState<string>("");
 
-  // Fetch tokens and populate the dropdowns
+  const currentAccount = useCurrentAccount();
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+
   useEffect(() => {
     const fetchTokens = async () => {
       try {
         const tokensResponse = await hopSdk.fetchTokens();
-        const tokenAddresses = tokensResponse.tokens.map(
-          (token: { address: string }) => token.address
-        );
-        setCoinList(tokenAddresses);
-        setFromToken(tokenAddresses[0] || "");
-        setToToken(tokenAddresses[1] || "");
+        setCoinList(tokensResponse.tokens || []);
+        if (tokensResponse.tokens.length > 0) {
+          setFromToken(tokensResponse.tokens[0]?.id || "");
+          setToToken(tokensResponse.tokens[1]?.id || "");
+        }
       } catch (error) {
         console.error("Error fetching tokens:", error);
-        setStatusMessage("Failed to fetch tokens. Please try again.");
+        setStatusMessage("Failed to fetch tokens. Please reload.");
       }
     };
 
@@ -46,16 +52,20 @@ function MindSwapPage() {
 
   const handleSwap = async () => {
     setStatusMessage("");
-    if (!wallets || wallets.length === 0) {
-      setStatusMessage("No connected wallet found. Please connect a wallet.");
+    if (!currentAccount) {
+      setStatusMessage("No connected wallet. Please connect a wallet first.");
       return;
     }
 
-    const activeWallet = wallets[0];
-    const walletAddress = activeWallet.accounts[0]?.address;
+    const walletAddress = currentAccount.address;
 
     if (!walletAddress) {
       setStatusMessage("Failed to retrieve wallet address.");
+      return;
+    }
+
+    if (!fromToken || !toToken || !amount || Number(amount) <= 0) {
+      setStatusMessage("Please fill out all fields with valid values.");
       return;
     }
 
@@ -63,8 +73,7 @@ function MindSwapPage() {
       setIsLoading(true);
       setStatusMessage("Fetching swap quote...");
 
-      // Fetch swap quote
-      const amountBigInt = BigInt(Math.floor(Number(amount) * 1e6)); // Adjust for decimals
+      const amountBigInt = BigInt(Math.floor(Number(amount) * 1e6));
       const quote = await hopSdk.fetchQuote({
         token_in: fromToken,
         token_out: toToken,
@@ -72,31 +81,38 @@ function MindSwapPage() {
       });
 
       if (!quote || !quote.trade) {
-        throw new Error("Failed to fetch quote. Please try again.");
+        throw new Error("Failed to fetch quote.");
       }
 
       setStatusMessage("Processing transaction...");
 
-      // Create and send the swap transaction
       const tx = await hopSdk.fetchTx({
         trade: quote.trade,
         sui_address: walletAddress,
-        gas_budget: 0.03e9, // Optional gas budget
-        max_slippage_bps: slippage * 100, // Convert slippage to bps
-        return_output_coin_argument: false,
+        gas_budget: 0.03e9,
+        max_slippage_bps: slippage * 100,
       });
 
-      const signedTx = await activeWallet.signTransaction(tx);
-      const response = await activeWallet.executeTransaction(signedTx);
-
-      if (response) {
-        setStatusMessage("Swap successful!");
-      } else {
-        setStatusMessage("Swap failed. Please try again.");
-      }
+      signAndExecuteTransaction(
+        {
+          transaction: Transaction.deserialize(tx),
+          chain: "sui:mainnet",
+        },
+        {
+          onSuccess: (result) => {
+            console.log("Transaction successful:", result);
+            setDigest(result.digest);
+            setStatusMessage("Swap successful!");
+          },
+          onError: (error) => {
+            console.error("Transaction error:", error);
+            setStatusMessage("Swap failed. Please try again.");
+          },
+        }
+      );
     } catch (error) {
       console.error("Error during swap:", error);
-      setStatusMessage("Swap failed. Please check the console for details.");
+      setStatusMessage("Swap failed. Check console for details.");
     } finally {
       setIsLoading(false);
     }
@@ -105,21 +121,19 @@ function MindSwapPage() {
   return (
     <div className="mind-swap">
       <div className="swap-container">
+        <ConnectButton />
         <h1 className="title">Mind Swap</h1>
-        <p className="description">
-          Swap your tokens using Hop Aggregator on SUI.
-        </p>
+        <p className="description">Swap tokens using Hop Aggregator on SUI.</p>
         <div className="form-group">
           <label htmlFor="fromToken">From Token</label>
           <select
             id="fromToken"
             value={fromToken}
             onChange={(e) => setFromToken(e.target.value)}
-            className="dropdown"
           >
             {coinList.map((coin) => (
-              <option key={coin} value={coin}>
-                {coin}
+              <option key={coin.id} value={coin.id}>
+                {coin.name} ({coin.symbol})
               </option>
             ))}
           </select>
@@ -130,13 +144,12 @@ function MindSwapPage() {
             id="toToken"
             value={toToken}
             onChange={(e) => setToToken(e.target.value)}
-            className="dropdown"
           >
             {coinList
-              .filter((coin) => coin !== fromToken)
+              .filter((coin) => coin.id !== fromToken)
               .map((coin) => (
-                <option key={coin} value={coin}>
-                  {coin}
+                <option key={coin.id} value={coin.id}>
+                  {coin.name} ({coin.symbol})
                 </option>
               ))}
           </select>
@@ -149,28 +162,23 @@ function MindSwapPage() {
             placeholder="Enter amount to swap"
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="input-field"
           />
         </div>
         <div className="form-group">
-          <label htmlFor="slippage">Slippage Tolerance (%)</label>
+          <label htmlFor="slippage">Slippage (%)</label>
           <input
             id="slippage"
             type="number"
-            placeholder="e.g., 1"
+            placeholder="1"
             value={slippage}
             onChange={(e) => setSlippage(Number(e.target.value))}
-            className="input-field"
           />
         </div>
-        <button
-          className="swap-button"
-          onClick={handleSwap}
-          disabled={isLoading}
-        >
+        <button onClick={handleSwap} disabled={isLoading}>
           {isLoading ? "Processing..." : "Swap"}
         </button>
-        {statusMessage && <p className="status-message">{statusMessage}</p>}
+        {statusMessage && <p>{statusMessage}</p>}
+        {digest && <p>Transaction Digest: {digest}</p>}
       </div>
     </div>
   );
