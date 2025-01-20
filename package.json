@@ -19,6 +19,7 @@
     "@cetusprotocol/cetus-sui-clmm-sdk": "^5.2.0",
     "@eslint/config-array": "^0.19.1",
     "@eslint/object-schema": "^2.1.5",
+    "@hop.ag/sdk": "^4.0.3",
     "@mysten/dapp-kit": "^0.14.46",
     "@mysten/deepbook-v3": "^0.12.24",
     "@mysten/sui": "^1.20.0",

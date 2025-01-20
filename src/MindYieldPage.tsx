@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "./MindYieldPage.css"; // Link to the CSS file for styling
+import "./MindYieldPage.css";
 
 function MindYieldPage() {
   const [amount, setAmount] = useState("");
