@@ -14,15 +14,23 @@ app.use(bodyParser.json());
 // Serve static files from the dist folder
 app.use(express.static(path.join(__dirname, "../dist")));
 
-// OpenAI API initialization
+// Verify the OpenAI API key exists
 if (!process.env.OPENAI_API_KEY) {
-  console.error("Error: OPENAI_API_KEY is not set in .env file.");
+  console.error("Error: OPENAI_API_KEY is not set in the .env file.");
   process.exit(1);
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Initialize OpenAI API client
+let openai;
+try {
+  openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+  console.log("OpenAI client initialized successfully.");
+} catch (error) {
+  console.error("Error initializing OpenAI client:", error.message);
+  process.exit(1);
+}
 
 // API route to handle OpenAI requests
 app.post("/api/generate", async (req, res) => {
@@ -33,17 +41,28 @@ app.post("/api/generate", async (req, res) => {
       return res.status(400).json({ error: "Prompt is required" });
     }
 
+    // Make the API call to OpenAI
     const chatCompletion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4", // Ensure the model name matches your subscription
       messages: [{ role: "user", content: prompt }],
     });
 
-    res.json({ result: chatCompletion.choices[0].message.content.trim() });
+    // Respond with the result
+    const result = chatCompletion.choices[0]?.message?.content?.trim();
+    if (!result) {
+      return res
+        .status(500)
+        .json({ error: "Invalid response from OpenAI API." });
+    }
+
+    res.json({ result });
   } catch (error) {
-    console.error("Error with OpenAI API:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to process request. Please try again later." });
+    console.error("Error with OpenAI API:", error.message);
+    res.status(500).json({
+      error:
+        error.response?.data?.error?.message ||
+        "Failed to process request. Please try again later.",
+    });
   }
 });
 
